@@ -1,0 +1,32 @@
+{
+  "games": [
+    {
+      "gameNumber": 1,
+      "players": [1, 2, 3],
+      "takes": {
+        "1": [4, 8, 1, 10, 5],
+        "2": [6, 5, 7, 1, 3],
+        "3": [10, 3, 8, 4, 7]
+      }
+    },
+    {
+      "gameNumber": 2,
+      "players": [1, 3],
+      "takes": { "1": [8, 1, 5, 9, 7], "3": [4, 2, 7, 3, 8] }
+    }
+  ],
+  "playerInfo": [
+    {
+      "id": 1,
+      "name": "Masayoshi Soken"
+    },
+    {
+      "id": 2,
+      "name": "Michael-Cristopher Koji Fox"
+    },
+    {
+      "id": 3,
+      "name": "Naoki Yoshida"
+    }
+  ]
+}
