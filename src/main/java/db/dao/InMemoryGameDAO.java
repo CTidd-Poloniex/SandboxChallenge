@@ -24,10 +24,8 @@ public class InMemoryGameDAO implements GameDAO{
     return new ArrayList<>(playerInfo);
   }
 
-  public void insertPlayer(String name) {
-    Integer newId = this.playerInfo.size() == 0 ? 0 : this.playerInfo.get(this.playerInfo.size() - 1).getId();
-    Player newPlayer = new Player(newId, name);
-    this.playerInfo.add(newPlayer);
+  public void insertPlayer(Player player) {
+    this.playerInfo.add(player);
   }
 
   public void insertGame(Game game) {

@@ -3,10 +3,12 @@ package gratitudeNUGame;
 import db.dao.GameDAO;
 import db.models.Game;
 import db.models.Player;
+import gratitudeNUGame.models.GameResultSummary;
 import gratitudeNUGame.models.PlayerGameSummary;
 import gratitudeNUGame.models.PlayerGameSummary.GameEntry;
-import java.util.ArrayList;
-import java.util.List;
+
+import javax.ws.rs.NotFoundException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class GratitudeNUGameManager {
@@ -23,7 +25,8 @@ public class GratitudeNUGameManager {
   }
 
   public List<Integer> getGameNumbers() {
-    return gameDAO.getGames().stream()
+    List<Game> games =  gameDAO.getGames();
+    return games.stream()
         .map(game -> game.getGameNumber())
         .collect(Collectors.toList());
   }
@@ -34,6 +37,18 @@ public class GratitudeNUGameManager {
         .findAny().orElse(null);
   }
 
+  public GameResultSummary getGameResultSummary(int gameNumber) {
+    Game game = getGame(gameNumber);
+    if(game == null) {
+      throw new NotFoundException("Game not found.");
+    }
+    List<Player> players = game.getPlayers().stream()
+            .map(playerID -> getPlayer(playerID))
+            .collect(Collectors.toList());
+
+    return new GameResultSummary(players, game);
+  }
+
   public PlayerGameSummary getPlayerGameSummary(Player player) {
     List<GameEntry> gameEntries = new ArrayList<>();
     int totalScore = 0;
@@ -41,7 +56,7 @@ public class GratitudeNUGameManager {
     int gamesWon = 0;
 
     for(Game game : gameDAO.getGames()) {
-      if(!game.getPlayers().contains(player)) {
+      if(!game.getPlayers().contains(player.getId())) {
         continue;
       }
 
@@ -76,7 +91,7 @@ public class GratitudeNUGameManager {
   public Player getPlayer(int playerID) {
     return gameDAO.getPlayerInfo().stream()
         .filter(player -> player.getId() == playerID)
-        .findAny().orElse(null);
+        .findAny().orElseThrow(() -> new NotFoundException());
   }
 
   public void addPlayer(String name) {
@@ -87,6 +102,38 @@ public class GratitudeNUGameManager {
         .findFirst().isPresent()) {
       throw new IllegalArgumentException();
     }
-    gameDAO.insertPlayer(name);
+    List<Player> heldPlayers = gameDAO.getPlayerInfo();
+    int uniqueID = heldPlayers.get(heldPlayers.size() < 1 ? 0 :heldPlayers.size() - 1).getId() + 1;
+    gameDAO.insertPlayer(new Player(uniqueID, name));
+  }
+
+  public void addGame(List<Integer> players, Map<Integer, List<Integer>> takes) {
+    Set<Integer> playerSet = new HashSet<>(players);
+    Set<Integer> takesKeys = takes.keySet();
+
+    if(playerSet.size() != players.size()) {
+      throw new IllegalArgumentException("Duplicate players in game.");
+    }
+    if(!takesKeys.equals(playerSet)) {
+      throw new IllegalArgumentException("Player set is not set equal to players in takes.");
+    }
+
+    Integer prevPlayerTakesRounds = null;
+    for(Integer playerID : players) {
+      Player player = getPlayer(playerID);
+      if(player == null) {
+        throw new IllegalArgumentException(String.format("PlayerID %n is unrecognized."));
+      }
+      int curPlayerTakesRounds = takes.get(playerID).size();
+      if(prevPlayerTakesRounds != null && curPlayerTakesRounds != prevPlayerTakesRounds) {
+        throw new IllegalArgumentException("Inconsistent amount of rounds played.");
+      }
+      prevPlayerTakesRounds = curPlayerTakesRounds;
+    }
+
+    List<Game> games = gameDAO.getGames();
+    int uniqueID = games.get(games.size() < 1 ? 0 :games.size() - 1).getGameNumber() + 1;
+    Game newGame = new Game(uniqueID, playerSet, takes);
+    gameDAO.insertGame(newGame);
   }
 }

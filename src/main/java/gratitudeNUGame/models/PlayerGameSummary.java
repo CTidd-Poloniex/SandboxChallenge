@@ -1,34 +1,32 @@
 package gratitudeNUGame.models;
 
-import db.models.Game;
-import db.models.Player;
 import java.util.List;
 
 public class PlayerGameSummary {
-  String name;
+  String playerName;
   int totalScore;
-  int averageTake;
-  int gamesWon;
+  int averageScore;
+  int totalWins;
   List<GameEntry> allPlayerTakes;
 
   public PlayerGameSummary() {
   }
 
-  public PlayerGameSummary(String name, int totalScore, int averageTake, int gamesWon,
-      List<GameEntry> allPlayerTakes) {
-    this.name = name;
+  public PlayerGameSummary(String playerName, int totalScore, int averageScore, int totalWins,
+                           List<GameEntry> allPlayerTakes) {
+    this.playerName = playerName;
     this.totalScore = totalScore;
-    this.averageTake = averageTake;
-    this.gamesWon = gamesWon;
+    this.averageScore = averageScore;
+    this.totalWins = totalWins;
     this.allPlayerTakes = allPlayerTakes;
   }
 
-  public String getName() {
-    return name;
+  public String getPlayerName() {
+    return playerName;
   }
 
-  public void setName(String name) {
-    this.name = name;
+  public void setPlayerName(String playerName) {
+    this.playerName = playerName;
   }
 
   public int getTotalScore() {
@@ -39,20 +37,20 @@ public class PlayerGameSummary {
     this.totalScore = totalScore;
   }
 
-  public int getAverageTake() {
-    return averageTake;
+  public int getAverageScore() {
+    return averageScore;
   }
 
-  public void setAverageTake(int averageTake) {
-    this.averageTake = averageTake;
+  public void setAverageScore(int averageScore) {
+    this.averageScore = averageScore;
   }
 
-  public int getGamesWon() {
-    return gamesWon;
+  public int getTotalWins() {
+    return totalWins;
   }
 
-  public void setGamesWon(int gamesWon) {
-    this.gamesWon = gamesWon;
+  public void setTotalWins(int totalWins) {
+    this.totalWins = totalWins;
   }
 
   public List<GameEntry> getAllPlayerTakes() {
@@ -72,17 +70,17 @@ public class PlayerGameSummary {
       return false;
 
     PlayerGameSummary other = (PlayerGameSummary) o;
-    return this.name.equals(other.name)
+    return this.playerName.equals(other.playerName)
         && this.totalScore == other.totalScore
-        && this.averageTake == other.averageTake
-        && this.gamesWon == other.gamesWon
+        && this.averageScore == other.averageScore
+        && this.totalWins == other.totalWins
         && this.allPlayerTakes.equals(other.allPlayerTakes);
 
   }
 
   @Override
   public final int hashCode() {
-    return this.name.hashCode() + this.totalScore + this.averageTake + this.gamesWon + this.allPlayerTakes.hashCode();
+    return this.playerName.hashCode() + this.totalScore + this.averageScore + this.totalWins + this.allPlayerTakes.hashCode();
   }
 
   public static class GameEntry {

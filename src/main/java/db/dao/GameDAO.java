@@ -8,5 +8,5 @@ public interface GameDAO {
   List<Game> getGames();
   List<Player> getPlayerInfo();
   void insertGame(Game game);
-  void insertPlayer(String name);
+  void insertPlayer(Player player);
 }
